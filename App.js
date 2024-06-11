@@ -1,13 +1,20 @@
 const express= require("express")
 const mongoose= require ("mongoose")
 const cors= require("cors")
-const student=require("/models/employee")
+const {employeemodel}=require("./models/Employee")
 
 const app=express()
 app.use(cors())
+app.use(express.json())
+
+mongoose.connect("mongodb+srv://Annajimmy:annajimmychirackal@cluster0.moqndmi.mongodb.net/employeedb?retryWrites=true&w=majority&appName=Cluster0")
 
 app.post("/",(req,res)=>{
-    res.send("Hello")
+    let input=req.body
+    let employee=new employeemodel(input)
+    employee.save()
+    console.log(employee)
+    res.json({"status":"success"})
 }
 )
 
@@ -24,13 +31,21 @@ app.post("/delete",
 )
 
 
-app.post("/viewall",
+app.get("/viewall",
     (req,res)=>{
-        res.send("View all page")
+        employeemodel.find().then(
+            (data)=>{
+                res.json(data)
+            }
+        ).catch(
+            (error)=>{
+                res.json(error)
+            }
+        )
     }
 )
 
-app.listen(8080,()=>{
+app.listen(8081,()=>{
     console.log("server started")
 } 
 )
